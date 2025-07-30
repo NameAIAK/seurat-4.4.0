@@ -1,0 +1,4 @@
+install.packages('remotes')
+remotes::install_github(repo = 'NameAIAK/seurat-4.4.0', ref = 'master')
+library(Seurat440)
+devtools::check()
