@@ -13,7 +13,7 @@ NULL
 #' with the observed PCA scores to determine statistical signifance. End result
 #' is a p-value for each gene's association with each principal component.
 #'
-#' @param object Seurat object
+#' @param object Seurat440 object
 #' @param reduction DimReduc to use. ONLY PCA CURRENTLY SUPPORTED.
 #' @param assay Assay used to calculate reduction.
 #' @param dims Number of PCs to compute significance for
@@ -24,7 +24,7 @@ NULL
 #' that have been processed.
 #' @param maxit maximum number of iterations to be performed by the irlba function of RunPCA
 #'
-#' @return Returns a Seurat object where JS(object = object[['pca']], slot = 'empirical')
+#' @return Returns a Seurat440 object where JS(object = object[['pca']], slot = 'empirical')
 #' represents p-values for each gene in the PCA analysis. If ProjectPCA is
 #' subsequently run, JS(object = object[['pca']], slot = 'full') then
 #' represents p-values for all genes.
@@ -138,7 +138,7 @@ JackStraw <- function(
     empirical.p.values.full = matrix()
   )
   JS(object = object[[reduction]]) <- jackstraw.obj
-  object <- LogSeuratCommand(object = object)
+  object <- LogSeurat440Command(object = object)
   return(object)
 }
 
@@ -146,13 +146,13 @@ JackStraw <- function(
 #'
 #' Perform l2 normalization on given dimensional reduction
 #'
-#' @param object Seurat object
+#' @param object Seurat440 object
 #' @param reduction Dimensional reduction to normalize
 #' @param new.dr name of new dimensional reduction to store
 #' (default is olddr.l2)
 #' @param new.key name of key for new dimensional reduction
 #'
-#' @return Returns a \code{\link{Seurat}} object
+#' @return Returns a \code{\link{Seurat440}} object
 #' @concept dimensional_reduction
 #'
 #' @export
@@ -184,7 +184,7 @@ L2Dim <- function(object, reduction, new.dr = NULL, new.key = NULL) {
 #'
 #' Perform l2 normalization on CCs
 #'
-#' @param object Seurat object
+#' @param object Seurat440 object
 #' @param \dots Additional parameters to L2Dim.
 #' @concept dimensional_reduction
 #'
@@ -200,7 +200,7 @@ L2CCA <- function(object, ...){
 #' Returns a set of genes, based on the JackStraw analysis, that have
 #' statistically significant associations with a set of PCs.
 #'
-#' @param object Seurat object
+#' @param object Seurat440 object
 #' @param pcs.use PCS to use.
 #' @param pval.cut P-value cutoff
 #' @param use.full Use the full list of genes (from the projected PCA). Assumes
@@ -257,7 +257,7 @@ PCASigGenes <- function(
 #' the cell loadings will remain unchanged, but now there are gene loadings for
 #' all genes.
 #'
-#' @param object Seurat object
+#' @param object Seurat440 object
 #' @param reduction Reduction to use
 #' @param assay Assay to use
 #' @param dims.print Number of dims to print features for
@@ -267,7 +267,7 @@ PCASigGenes <- function(
 #' @param do.center Center the dataset prior to projection (should be set to TRUE)
 #' @param verbose Print top genes associated with the projected dimensions
 #'
-#' @return Returns Seurat object with the projected values
+#' @return Returns Seurat440 object with the projected values
 #'
 #' @export
 #' @concept dimensional_reduction
@@ -315,7 +315,7 @@ ProjectDim <- function(
       projected = TRUE
     )
   }
-  object <- LogSeuratCommand(object = object)
+  object <- LogSeurat440Command(object = object)
   return(object)
 }
 
@@ -430,9 +430,9 @@ ProjectUMAP.DimReduc <- function(
 #' @rdname ProjectUMAP
 #' @concept dimensional_reduction
 #' @export
-#' @method ProjectUMAP Seurat
+#' @method ProjectUMAP Seurat440
 #'
-ProjectUMAP.Seurat <- function(
+ProjectUMAP.Seurat440 <- function(
   query,
   query.reduction,
   query.dims = NULL,
@@ -488,7 +488,7 @@ ProjectUMAP.Seurat <- function(
 }
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# Methods for Seurat-defined generics
+# Methods for Seurat440-defined generics
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #' @param standardize Standardize matrices - scales columns to have unit variance
@@ -548,16 +548,16 @@ RunCCA.default <- function(
 #' @param compute.gene.loadings Also compute the gene loadings. NOTE - this will
 #' scale every gene in the dataset which may impose a high memory cost.
 #' @param add.cell.id1,add.cell.id2 Add ...
-#' @param ... Extra parameters (passed onto MergeSeurat in case with two objects
+#' @param ... Extra parameters (passed onto MergeSeurat440 in case with two objects
 #' passed, passed onto ScaleData in case with single object and rescale.groups
 #' set to TRUE)
 #'
 #' @rdname RunCCA
 #' @concept dimensional_reduction
 #' @export
-#' @method RunCCA Seurat
+#' @method RunCCA Seurat440
 #'
-RunCCA.Seurat <- function(
+RunCCA.Seurat440 <- function(
   object1,
   object2,
   assay1 = NULL,
@@ -781,10 +781,10 @@ RunICA.Assay <- function(
 #'
 #' @rdname RunICA
 #' @concept dimensional_reduction
-#' @method RunICA Seurat
+#' @method RunICA Seurat440
 #' @export
 #'
-RunICA.Seurat <- function(
+RunICA.Seurat440 <- function(
   object,
   assay = NULL,
   features = NULL,
@@ -816,7 +816,7 @@ RunICA.Seurat <- function(
     ...
   )
   object[[reduction.name]] <- reduction.data
-  object <- LogSeuratCommand(object = object)
+  object <- LogSeurat440Command(object = object)
   return(object)
 }
 
@@ -971,9 +971,9 @@ RunPCA.Assay <- function(
 #' @rdname RunPCA
 #' @concept dimensional_reduction
 #' @export
-#' @method RunPCA Seurat
+#' @method RunPCA Seurat440
 #'
-RunPCA.Seurat <- function(
+RunPCA.Seurat440 <- function(
   object,
   assay = NULL,
   features = NULL,
@@ -1005,7 +1005,7 @@ RunPCA.Seurat <- function(
     ...
   )
   object[[reduction.name]] <- reduction.data
-  object <- LogSeuratCommand(object = object)
+  object <- LogSeurat440Command(object = object)
   return(object)
 }
 
@@ -1124,9 +1124,9 @@ RunTSNE.dist <- function(
 #' @rdname RunTSNE
 #' @concept dimensional_reduction
 #' @export
-#' @method RunTSNE Seurat
+#' @method RunTSNE Seurat440
 #'
-RunTSNE.Seurat <- function(
+RunTSNE.Seurat440 <- function(
   object,
   reduction = "pca",
   cells = NULL,
@@ -1177,7 +1177,7 @@ RunTSNE.Seurat <- function(
     stop("Unknown way of running tSNE")
   }
   object[[reduction.name]] <- tsne.reduction
-  object <- LogSeuratCommand(object = object)
+  object <- LogSeurat440Command(object = object)
   return(object)
 }
 
@@ -1225,7 +1225,7 @@ RunUMAP.default <- function(
   if (!is.null(x = seed.use)) {
     set.seed(seed = seed.use)
   }
-  if (umap.method != 'umap-learn' && getOption('Seurat.warn.umap.uwot', TRUE)) {
+  if (umap.method != 'umap-learn' && getOption('Seurat440.warn.umap.uwot', TRUE)) {
     warning(
       "The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric",
       "\nTo use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'",
@@ -1233,7 +1233,7 @@ RunUMAP.default <- function(
       call. = FALSE,
       immediate. = TRUE
     )
-    options(Seurat.warn.umap.uwot = FALSE)
+    options(Seurat440.warn.umap.uwot = FALSE)
   }
   if (umap.method == 'uwot-learn') {
     warning("'uwot-learn' is deprecated. Set umap.method = 'uwot' and return.model = TRUE")
@@ -1580,7 +1580,7 @@ RunUMAP.Neighbor <- function(
 #' \describe{
 #'   \item{\code{uwot}:}{Runs umap via the uwot R package}
 #'   \item{\code{uwot-learn}:}{Runs umap via the uwot R package and return the learned umap model}
-#'   \item{\code{umap-learn}:}{Run the Seurat wrapper of the python umap-learn package}
+#'   \item{\code{umap-learn}:}{Run the Seurat440 wrapper of the python umap-learn package}
 #' }
 #' @param n.neighbors This determines the number of neighboring points used in
 #' local approximations of manifold structure. Larger values will result in more
@@ -1647,7 +1647,7 @@ RunUMAP.Neighbor <- function(
 #' added to the variance of local radii in the embedding when calculating
 #' the density correlation objective to prevent numerical instability from
 #' dividing by a small number. Default is 0.1.
-#' @param reduction.name Name to store dimensional reduction under in the Seurat object
+#' @param reduction.name Name to store dimensional reduction under in the Seurat440 object
 #' @param reduction.key dimensional reduction key, specifies the string before
 #' the number for the dimension names. UMAP by default
 #' @param return.model whether UMAP will return the uwot model
@@ -1658,9 +1658,9 @@ RunUMAP.Neighbor <- function(
 #' @rdname RunUMAP
 #' @concept dimensional_reduction
 #' @export
-#' @method RunUMAP Seurat
+#' @method RunUMAP Seurat440
 #'
-RunUMAP.Seurat <- function(
+RunUMAP.Seurat440 <- function(
   object,
   dims = NULL,
   reduction = 'pca',
@@ -1782,7 +1782,7 @@ RunUMAP.Seurat <- function(
     reduction.key = reduction.key,
     verbose = verbose
   )
-  object <- LogSeuratCommand(object = object)
+  object <- LogSeurat440Command(object = object)
   return(object)
 }
 
@@ -1856,9 +1856,9 @@ ScoreJackStraw.DimReduc <- function(object, dims = 1:5, score.thresh = 1e-5, ...
 #' @rdname ScoreJackStraw
 #' @concept dimensional_reduction
 #' @export
-#' @method ScoreJackStraw Seurat
+#' @method ScoreJackStraw Seurat440
 #'
-ScoreJackStraw.Seurat <- function(
+ScoreJackStraw.Seurat440 <- function(
   object,
   reduction = "pca",
   dims = 1:5,
@@ -1881,7 +1881,7 @@ ScoreJackStraw.Seurat <- function(
       ...
     )))
   }
-  object <- LogSeuratCommand(object = object)
+  object <- LogSeurat440Command(object = object)
   return(object)
 }
 
@@ -2405,9 +2405,9 @@ RunSPCA.Assay <- function(
 #' @rdname RunSPCA
 #' @concept dimensional_reduction
 #' @export
-#' @method RunSPCA Seurat
+#' @method RunSPCA Seurat440
 #'
-RunSPCA.Seurat <- function(
+RunSPCA.Seurat440 <- function(
   object,
   assay = NULL,
   features = NULL,
@@ -2439,7 +2439,7 @@ RunSPCA.Seurat <- function(
     ...
   )
   object[[reduction.name]] <- reduction.data
-  object <- LogSeuratCommand(object = object)
+  object <- LogSeurat440Command(object = object)
   return(object)
 }
 
@@ -2545,9 +2545,9 @@ RunSLSI.Assay <- function(
 #' @rdname RunSLSI
 #' @concept dimensional_reduction
 #' @export
-#' @method RunSLSI Seurat
+#' @method RunSLSI Seurat440
 #'
-RunSLSI.Seurat <- function(
+RunSLSI.Seurat440 <- function(
   object,
   assay = NULL,
   features = NULL,
@@ -2579,6 +2579,6 @@ RunSLSI.Seurat <- function(
     ...
   )
   object[[reduction.name]] <- reduction.data
-  object <- LogSeuratCommand(object = object)
+  object <- LogSeurat440Command(object = object)
   return(object)
 }
