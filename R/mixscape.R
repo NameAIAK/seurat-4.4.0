@@ -15,7 +15,7 @@ NULL
 #' averaged mRNA expression profile of the non-targeting neighbors from the mRNA
 #' expression profile of the target cell.
 #'
-#' @param object An object of class Seurat.
+#' @param object An object of class Seurat440.
 #' @param assay Name of Assay PRTB  signature is being calculated on.
 #' @param features Features to compute PRTB signature for. Defaults to the
 #' variable features set in the assay specified.
@@ -29,7 +29,7 @@ NULL
 #' @param reduction Reduction method used to calculate nearest neighbors.
 #' @param new.assay.name Name for the new assay.
 #' @param verbose Display progress + messages
-#' @return Returns a Seurat object with a new assay added containing the
+#' @return Returns a Seurat440 object with a new assay added containing the
 #' perturbation signature for all cells in the data slot.
 #'
 #' @importFrom RANN nn2
@@ -114,14 +114,14 @@ CalcPerturbSig <- function(
     )
   )
   object[[new.assay.name]] <- prtb.assay
-  object <- LogSeuratCommand(object = object)
+  object <- LogSeurat440Command(object = object)
   return(object)
 }
 
 #' DE and EnrichR pathway visualization barplot
 #'
 #' @inheritParams FindMarkers
-#' @param object Name of object class Seurat.
+#' @param object Name of object class Seurat440.
 #' @param ident.1 Cell class identity 1.
 #' @param ident.2 Cell class identity 2.
 #' @param balanced Option to display pathway enrichments for both negative and
@@ -315,7 +315,7 @@ DEenrichRPlot <- function(
 #' @inheritParams PrepLDA
 #' @inheritParams RunLDA
 #'
-#' @return Returns a Seurat object with LDA added in the reduction slot.
+#' @return Returns a Seurat440 object with LDA added in the reduction slot.
 #'
 #' @export
 #' @concept mixscape
@@ -359,7 +359,7 @@ MixscapeLDA <- function(
 #' This function performs unsupervised PCA on each mixscape class separately and projects each subspace onto all
 #' cells in the data.
 #'
-#' @param object An object of class Seurat.
+#' @param object An object of class Seurat440.
 #' @param de.assay Assay to use for selection of DE genes.
 #' @param pc.assay Assay to use for running Principle components analysis.
 #' @param labels Meta data column with target gene class labels.
@@ -555,7 +555,7 @@ RunLDA.Assay <- function(
   return(reduction.data)
 }
 
-#' @param object An object of class Seurat.
+#' @param object An object of class Seurat440.
 #' @param assay Assay to use for performing Linear Discriminant Analysis (LDA).
 #' @param labels Meta data column with target gene class labels.
 #' @param features Features to compute LDA on
@@ -570,9 +570,9 @@ RunLDA.Assay <- function(
 #' @rdname RunLDA
 #' @concept mixscape
 #' @export
-#' @method RunLDA Seurat
+#' @method RunLDA Seurat440
 #'
-RunLDA.Seurat <- function(
+RunLDA.Seurat440 <- function(
   object,
   assay = NULL,
   labels,
@@ -607,7 +607,7 @@ RunLDA.Seurat <- function(
       x = slot(object = object[[reduction.name]], name = "misc")[["posterior"]]
     )
   )
-  object <- LogSeuratCommand(object = object)
+  object <- LogSeurat440Command(object = object)
   object <- ProjectDim(
     object = object,
     reduction = reduction.name,
@@ -630,7 +630,7 @@ RunLDA.Seurat <- function(
 #'
 #' @inheritParams FindMarkers
 #' @importFrom ggplot2 geom_density position_dodge
-#' @param object An object of class Seurat.
+#' @param object An object of class Seurat440.
 #' @param assay Assay to use for mixscape classification.
 #' @param slot Assay data slot to use.
 #' @param labels metadata column with target gene labels.
@@ -656,7 +656,7 @@ RunLDA.Seurat <- function(
 #' classification.
 #' @param fine.mode.labels metadata column with gRNA ID labels.
 #' @param prtb.type specify type of CRISPR perturbation expected for labeling mixscape classifications. Default is KO.
-#' @return Returns Seurat object with with the following information in the
+#' @return Returns Seurat440 object with with the following information in the
 #' meta data and tools slots:
 #' \describe{
 #'   \item{mixscape_class}{Classification result with cells being either
@@ -978,7 +978,7 @@ MixscapeHeatmap <- function(
 #' Density plots to visualize perturbation scores calculated from RunMixscape
 #' function.
 #'
-#' @param object An object of class Seurat.
+#' @param object An object of class Seurat440.
 #' @param target.gene.ident Target gene name to visualize perturbation scores for.
 #' @param target.gene.class meta data column specifying all target gene names in the experiment.
 #' @param before.mixscape Option to split densities based on mixscape classification (default) or original target gene classification.
@@ -1148,11 +1148,11 @@ DefineNormalMixscape <- function(x) {
 
 # Get missing perturbation signature for missing features
 #
-# @param object Seurat object
+# @param object Seurat440 object
 # @param assay Perturbation signature assay name
 # @param features vector of features to compute for
 # @param verbose display progress
-# @return Returns Seurat object with assay updated with new features
+# @return Returns Seurat440 object with assay updated with new features
 #
 GetMissingPerturb <- function(object, assay, features, verbose = TRUE) {
   if (length(x = features) == 0) {
@@ -1233,7 +1233,7 @@ GetMissingPerturb <- function(object, assay, features, verbose = TRUE) {
 # Helper function to compute the perturbation differences - enables reuse in
 # GetMissingPerturb
 #
-# @param object Seurat object
+# @param object Seurat440 object
 # @param assay assay to use
 # @param slot slot to use
 # @param all_cells vector of cell names to compute difference for
@@ -1281,7 +1281,7 @@ ProjectVec <- function(v1, v2) {
 # Function to find top DE genes that pass some p value cutoff between cells
 # with targeting and non-targeting gRNAs.
 #
-# @param object An object of class Seurat.
+# @param object An object of class Seurat440.
 # @param ident.1 Target gene class or cells to find DE genes for.
 # @param ident.2 Non-targetting class or cells
 # @param labels metadata column with target gene classification.
