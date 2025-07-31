@@ -5,7 +5,7 @@
 #' @importFrom methods setClass setOldClass setClassUnion slot
 #' slot<- setMethod new signature slotNames is setAs setValidity .hasSlot
 #' @importClassesFrom Matrix dgCMatrix
-#' @useDynLib Seurat
+#' @useDynLib Seurat440
 #'
 NULL
 
@@ -155,7 +155,7 @@ IntegrationData <- setClass(
 #' @slot clips A list of two numeric of length two specifying the min and max
 #' values the Pearson residual will be clipped to. One for vst and one for
 #' SCTransform
-#' @slot umi.assay Name of the assay of the seurat object containing UMI matrix
+#' @slot umi.assay Name of the assay of the Seurat440 object containing UMI matrix
 #' and the default is RNA
 #' @slot model A formula used in SCTransform
 #' @slot arguments other information used in SCTransform
@@ -307,7 +307,7 @@ setClass(Class = 'SliceImage', contains = 'VisiumV1')
 
 #' Get a vector of cell names associated with an image (or set of images)
 #'
-#' @param object Seurat object
+#' @param object Seurat440 object
 #' @param images Vector of image names
 #' @param unlist Return as a single vector of cell names as opposed to a list,
 #' named by image name.
@@ -439,12 +439,12 @@ CreateSCTAssayObject <- function(
   return(assay)
 }
 
-#' Slim down a Seurat object
+#' Slim down a Seurat440 object
 #'
-#' Keep only certain aspects of the Seurat object. Can be useful in functions that utilize merge as
+#' Keep only certain aspects of the Seurat440 object. Can be useful in functions that utilize merge as
 #' it reduces the amount of data in the merge.
 #'
-#' @param object Seurat object
+#' @param object Seurat440 object
 #' @param counts Preserve the count matrices for the assays specified
 #' @param data Preserve the data slot for the assays specified
 #' @param scale.data Preserve the scale.data slot for the assays specified
@@ -459,7 +459,7 @@ CreateSCTAssayObject <- function(
 #' @export
 #' @concept objects
 #'
-DietSeurat <- function(
+DietSeurat440 <- function(
   object,
   counts = TRUE,
   data = TRUE,
@@ -534,7 +534,7 @@ DietSeurat <- function(
 #' this function will display a \code{\link{SpatialDimPlot}} showing which cells
 #' were removed for easy adjustment of the center and/or radius.
 #'
-#' @param object Seurat object with slide-seq data
+#' @param object Seurat440 object with slide-seq data
 #' @param image Name of the image where the coordinates are stored
 #' @param center Vector specifying the x and y coordinates for the center of the
 #' inclusion circle
@@ -542,7 +542,7 @@ DietSeurat <- function(
 #' @param do.plot Display a \code{\link{SpatialDimPlot}} with the cells being
 #' removed labeled.
 #'
-#' @return Returns a Seurat object with only the subset of cells that pass the
+#' @return Returns a Seurat440 object with only the subset of cells that pass the
 #' circular filter
 #'
 #' @concept objects
@@ -604,7 +604,7 @@ FilterSlideSeq <- function(
 
 #' Get integration data
 #'
-#' @param object Seurat object
+#' @param object Seurat440 object
 #' @param integration.name Name of integration object
 #' @param slot Which slot in integration object to get
 #'
@@ -624,12 +624,12 @@ GetIntegrationData <- function(object, integration.name, slot) {
 
 #' Set integration data
 #'
-#' @param object Seurat object
+#' @param object Seurat440 object
 #' @param integration.name Name of integration object
 #' @param slot Which slot in integration object to set
 #' @param new.data New data to insert
 #'
-#' @return Returns a \code{\link{Seurat}} object
+#' @return Returns a \code{\link{Seurat440}} object
 #'
 #' @export
 #' @concept objects
@@ -657,11 +657,11 @@ SetIntegrationData <- function(object, integration.name, slot, new.data) {
 #' that contains cells from many patients, and subdividing it into
 #' patient-specific objects.
 #'
-#' @param object Seurat object
+#' @param object Seurat440 object
 #' @param split.by Attribute for splitting. Default is "ident". Currently
 #' only supported for class-level (i.e. non-quantitative) attributes.
 #'
-#' @return A named list of Seurat objects, each containing a subset of cells
+#' @return A named list of Seurat440 objects, each containing a subset of cells
 #' from the original object.
 #'
 #' @export
@@ -785,7 +785,7 @@ TopNeighbors <- function(object, cell, n = 5) {
 }
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# Methods for Seurat-defined generics
+# Methods for Seurat440-defined generics
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #' @param assay Assay to convert
@@ -794,14 +794,14 @@ TopNeighbors <- function(object, cell, n = 5) {
 #' @rdname as.CellDataSet
 #' @concept objects
 #' @export
-#' @method as.CellDataSet Seurat
+#' @method as.CellDataSet Seurat440
 #'
-as.CellDataSet.Seurat <- function(x, assay = NULL, reduction = NULL, ...) {
+as.CellDataSet.Seurat440 <- function(x, assay = NULL, reduction = NULL, ...) {
   CheckDots(...)
   if (!PackageCheck('monocle', error = FALSE)) {
     stop("Please install monocle from Bioconductor before converting to a CellDataSet object")
   } else if (packageVersion(pkg = 'monocle') >= package_version(x = '2.99.0')) {
-    stop("Seurat can only convert to/from Monocle v2.X objects")
+    stop("Seurat440 can only convert to/from Monocle v2.X objects")
   }
   assay <- assay %||% DefaultAssay(object = x)
   # make variables, then run `newCellDataSet`
@@ -866,24 +866,24 @@ as.CellDataSet.Seurat <- function(x, assay = NULL, reduction = NULL, ...) {
   return(cds)
 }
 
-#' Convert objects to \code{Seurat} objects
+#' Convert objects to \code{Seurat440} objects
 #'
-#' @inheritParams SeuratObject::as.Seurat
+#' @inheritParams SeuratObject::as.Seurat440
 #' @param slot Slot to store expression data as
 #' @param verbose Show progress updates
 #'
-#' @return A \code{Seurat} object generated from \code{x}
+#' @return A \code{Seurat440} object generated from \code{x}
 #'
 #' @importFrom utils packageVersion
 #'
-#' @rdname as.Seurat
+#' @rdname as.Seurat440
 #' @concept objects
 #' @export
-#' @method as.Seurat CellDataSet
+#' @method as.Seurat440 CellDataSet
 #'
-#' @seealso \code{\link[SeuratObject:as.Seurat]{SeuratObject::as.Seurat}}
+#' @seealso \code{\link[SeuratObject:as.Seurat440]{SeuratObject::as.Seurat440}}
 #'
-as.Seurat.CellDataSet <- function(
+as.Seurat440.CellDataSet <- function(
   x,
   slot = 'counts',
   assay = 'RNA',
@@ -894,7 +894,7 @@ as.Seurat.CellDataSet <- function(
   if (!PackageCheck('monocle', error = FALSE)) {
     stop("Please install monocle from Bioconductor before converting to a CellDataSet object")
   } else if (packageVersion(pkg = 'monocle') >= package_version(x = '2.99.0')) {
-    stop("Seurat can only convert to/from Monocle v2.X objects")
+    stop("Seurat440 can only convert to/from Monocle v2.X objects")
   }
   slot <- match.arg(arg = slot, choices = c('counts', 'data'))
   if (verbose) {
@@ -916,17 +916,17 @@ as.Seurat.CellDataSet <- function(
   }
   # Creating the object
   if (verbose) {
-    message("Building Seurat object")
+    message("Building Seurat440 object")
   }
   if (slot == 'data') {
     assays <- list(CreateAssayObject(data = expr))
     names(x = assays) <- assay
     Key(object = assays[[assay]]) <- suppressWarnings(expr = UpdateKey(key = assay))
     object <- new(
-      Class = 'Seurat',
+      Class = 'Seurat440',
       assays = assays,
       meta.data = meta.data,
-      version = packageVersion(pkg = 'Seurat'),
+      version = packageVersion(pkg = 'Seurat440'),
       project.name = 'SeuratProject'
     )
     DefaultAssay(object = object) <- assay
@@ -1024,14 +1024,14 @@ as.Seurat.CellDataSet <- function(
 #' @param data name of the SingleCellExperiment assay to slot as \code{data}.
 #' Set to NULL if only counts are present
 #' @param assay Name of assays to convert; set to \code{NULL} for all assays to be converted
-#' @param project Project name for new Seurat object
+#' @param project Project name for new Seurat440 object
 #'
-#' @rdname as.Seurat
+#' @rdname as.Seurat440
 #' @concept objects
 #' @export
-#' @method as.Seurat SingleCellExperiment
+#' @method as.Seurat440 SingleCellExperiment
 #'
-as.Seurat.SingleCellExperiment <- function(
+as.Seurat440.SingleCellExperiment <- function(
   x,
   counts = 'counts',
   data = 'logcounts',
@@ -1104,14 +1104,14 @@ as.Seurat.SingleCellExperiment <- function(
     }
     names(x = assays) <- assay
     Key(object = assays[[assay]]) <- paste0(tolower(x = assay), '_')
-    # Create the Seurat object
+    # Create the Seurat440 object
     if (!exists(x = "object")) {
       object <- CreateSeuratObject(
         counts = assays[[assay]],
-        Class = 'Seurat',
+        Class = 'Seurat440',
         assay = assay,
         meta.data = meta.data,
-        version = packageVersion(pkg = 'Seurat'),
+        version = packageVersion(pkg = 'Seurat440'),
         project.name = project
       )
     } else {
@@ -1179,16 +1179,16 @@ as.Seurat.SingleCellExperiment <- function(
 #' @rdname as.SingleCellExperiment
 #' @concept objects
 #' @export
-#' @method as.SingleCellExperiment Seurat
+#' @method as.SingleCellExperiment Seurat440
 #'
-as.SingleCellExperiment.Seurat <- function(x, assay = NULL, ...) {
+as.SingleCellExperiment.Seurat440 <- function(x, assay = NULL, ...) {
   CheckDots(...)
   if (!PackageCheck('SingleCellExperiment', error = FALSE)) {
     stop("Please install SingleCellExperiment from Bioconductor before converting to a SingeCellExperiment object")
   }
   assay <- assay %||% Assays(object = x)
   if (!all(assay %in% Assays(object = x))) {
-    stop("One or more of the assays you are trying to convert is not in the Seurat object")
+    stop("One or more of the assays you are trying to convert is not in the Seurat440 object")
   }
   if (DefaultAssay(object = x) %in% assay) {
     assay <- union(DefaultAssay(object = x), assay)
@@ -1351,13 +1351,13 @@ Cells.VisiumV1 <- function(x, ...) {
 #' @rdname GetAssay
 #' @concept objects
 #' @export
-#' @method GetAssay Seurat
+#' @method GetAssay Seurat440
 #'
 #' @examples
 #' data("pbmc_small")
 #' GetAssay(object = pbmc_small, assay = "RNA")
 #'
-GetAssay.Seurat <- function(object, assay = NULL, ...) {
+GetAssay.Seurat440 <- function(object, assay = NULL, ...) {
   CheckDots(...)
   assay <- assay %||% DefaultAssay(object = object)
   object.assays <- FilterObjects(object = object, classes.keep = 'Assay')
@@ -1765,14 +1765,14 @@ SCTResults.SCTAssay <- function(object, slot, model = NULL, ...) {
   return(object)
 }
 
-#' @param assay Assay in the Seurat object to pull from
+#' @param assay Assay in the Seurat440 object to pull from
 #'
 #' @rdname SCTResults
 #' @export
 #' @concept objects
-#' @method SCTResults Seurat
+#' @method SCTResults Seurat440
 #'
-SCTResults.Seurat <- function(object, assay = "SCT", slot, model = NULL, ...) {
+SCTResults.Seurat440 <- function(object, assay = "SCT", slot, model = NULL, ...) {
   CheckDots(...)
   return(SCTResults(object = object[[assay]], slot = slot, model = model, ...))
 }
@@ -1907,7 +1907,7 @@ levels.SCTAssay <- function(x) {
 #' Merge SCTAssay objects
 #'
 #' @inheritParams SeuratObject::merge
-#' @param x A \code{\link[SeuratObject]{Seurat}} object
+#' @param x A \code{\link[SeuratObject]{Seurat440}} object
 #' @param na.rm If na.rm = TRUE, this will only preserve residuals that are
 #' present in all SCTAssays being merged. Otherwise, missing residuals will be
 #' populated with NAs.
@@ -1924,9 +1924,9 @@ merge.SCTAssay <- function(
   ...
 ) {
   assays <- c(x, y)
-  parent.call <- grep(pattern = "merge.Seurat", x = sys.calls())
+  parent.call <- grep(pattern = "merge.Seurat440", x = sys.calls())
   if (length(x = parent.call) > 0) {
-    # Try and fill in missing residuals if called in the context of merge.Seurat
+    # Try and fill in missing residuals if called in the context of merge.Seurat440
     all.features <- unique(x = unlist(x = lapply(X = assays, FUN = function(assay) {
       if (inherits(x = x, what = "SCTAssay")) {
         return(rownames(x = GetAssayData(object = assay, slot = "scale.data")))
@@ -1936,9 +1936,9 @@ merge.SCTAssay <- function(
       assays <- lapply(X = 1:length(x = assays), FUN = function(assay) {
         if (inherits(x = assays[[assay]], what = "SCTAssay")) {
           parent.environ <- sys.frame(which = parent.call[1])
-          seurat.object <- parent.environ$objects[[assay]]
-          seurat.object <- suppressWarnings(expr = GetResidual(object = seurat.object, features = all.features, assay = parent.environ$assay, verbose = FALSE))
-          return(seurat.object[[parent.environ$assay]])
+          Seurat440.object <- parent.environ$objects[[assay]]
+          Seurat440.object <- suppressWarnings(expr = GetResidual(object = Seurat440.object, features = all.features, assay = parent.environ$assay, verbose = FALSE))
+          return(Seurat440.object[[parent.environ$assay]])
         }
         return(assays[[assay]])
       })
@@ -2201,13 +2201,13 @@ subset.VisiumV1 <- function(x, cells, ...) {
   return(x)
 }
 
-#' Update pre-V4 Assays generated with SCTransform in the Seurat to the new
+#' Update pre-V4 Assays generated with SCTransform in the Seurat440 to the new
 #' SCTAssay class
 #
-#' @param object A Seurat object
+#' @param object A Seurat440 object
 #' @export
 #' @concept objects
-#' @return A Seurat object with updated SCTAssays
+#' @return A Seurat440 object with updated SCTAssays
 #'
 UpdateSCTAssays <- function(object) {
   assays <- Assays(object = object)
@@ -2229,7 +2229,7 @@ UpdateSCTAssays <- function(object) {
 #' @section Creating an \code{SCTAssay} from an \code{Assay}:
 #' Conversion from an \code{Assay} object to an \code{SCTAssay} object by
 #' is done by adding the additional slots to the object. If \code{from} has
-#' results generated by \code{\link{SCTransform}} from Seurat v3.0.0 to v3.1.1,
+#' results generated by \code{\link{SCTransform}} from Seurat440 v3.0.0 to v3.1.1,
 #' the conversion will automagically fill the new slots with the data
 #'
 setAs(
@@ -2283,7 +2283,7 @@ setMethod(
   signature = 'TransferAnchorSet',
   definition = function(object) {
     cat('An AnchorSet object containing', nrow(x = slot(object = object, name = "anchors")),
-        "anchors between the reference and query Seurat objects. \n",
+        "anchors between the reference and query Seurat440 objects. \n",
         "This can be used as input to TransferData.\n")
   }
 )
@@ -2293,7 +2293,7 @@ setMethod(
   signature = 'IntegrationAnchorSet',
   definition = function(object) {
     cat('An AnchorSet object containing', nrow(x = slot(object = object, name = "anchors")),
-        "anchors between", length(x = slot(object = object, name = "object.list")), "Seurat objects \n",
+        "anchors between", length(x = slot(object = object, name = "object.list")), "Seurat440 objects \n",
         "This can be used as input to IntegrateData.\n")
   }
 )
@@ -2430,7 +2430,7 @@ CalcN <- function(object) {
 # If none present, finds all images present in the object. Returns the name of
 # the first image
 #
-# @param object A Seurat object
+# @param object A Seurat440 object
 #
 # @return The name of the default image
 #
@@ -2443,12 +2443,12 @@ DefaultImage <- function(object) {
   return(images[[1]])
 }
 
-# Get the names of objects within a Seurat object that are of a certain class
+# Get the names of objects within a Seurat440 object that are of a certain class
 #
-# @param object A Seurat object
+# @param object A Seurat440 object
 # @param classes.keep A vector of names of classes to get
 #
-# @return A vector with the names of objects within the Seurat object that are of class \code{classes.keep}
+# @return A vector with the names of objects within the Seurat440 object that are of class \code{classes.keep}
 #
 #' @importFrom stats na.omit
 #
@@ -2482,9 +2482,9 @@ FilterObjects <- function(object, classes.keep = c('Assay', 'DimReduc')) {
   return(names(x = object.classes))
 }
 
-# Find the collection of an object within a Seurat object
+# Find the collection of an object within a Seurat440 object
 #
-# @param object A Seurat object
+# @param object A Seurat440 object
 # @param name Name of object to find
 #
 # @return The collection (slot) of the object
@@ -2689,7 +2689,7 @@ Top <- function(data, num, balanced) {
   return(top)
 }
 
-# Update Seurat assay
+# Update Seurat440 assay
 #
 # @param old.assay Seurat2 assay
 # @param assay Name to store for assay in new object
@@ -2793,9 +2793,9 @@ UpdateJackstraw <- function(old.jackstraw) {
 
 # Update a Key
 #
-# @param key A character to become a Seurat Key
+# @param key A character to become a Seurat440 Key
 #
-# @return An updated Key that's valid for Seurat
+# @return An updated Key that's valid for Seurat440
 #
 UpdateKey <- function(key) {
   if (grepl(pattern = '^[[:alnum:]]+_$', x = key)) {
