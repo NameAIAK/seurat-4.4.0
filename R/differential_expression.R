@@ -8,7 +8,7 @@ NULL
 
 globalVariables(
   names = c('myAUC', 'p_val', 'avg_logFC'),
-  package = 'Seurat440',
+  package = 'Seurat',
   add = TRUE
 )
 #' Gene expression markers for all identity classes
@@ -406,7 +406,7 @@ FindConservedMarkers <- function(
 }
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# Methods for Seurat440-defined generics
+# Methods for Seurat-defined generics
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #' @param cells.1 Vector of cell names belonging to group 1
@@ -930,9 +930,9 @@ FindMarkers.DimReduc <- function(
 #' @rdname FindMarkers
 #' @concept differential_expression
 #' @export
-#' @method FindMarkers Seurat440
+#' @method FindMarkers Seurat
 #'
-FindMarkers.Seurat440 <- function(
+FindMarkers.Seurat <- function(
   object,
   ident.1 = NULL,
   ident.2 = NULL,
@@ -1260,8 +1260,8 @@ FoldChange.DimReduc <- function(
 #' @rdname FoldChange
 #' @concept differential_expression
 #' @export
-#' @method FoldChange Seurat440
-FoldChange.Seurat440 <- function(
+#' @method FoldChange Seurat
+FoldChange.Seurat <- function(
   object,
   ident.1 = NULL,
   ident.2 = NULL,
@@ -1518,7 +1518,7 @@ DifferentialLRT <- function(x, y, xmin = 0) {
 # the LRT model proposed in McDavid et al, Bioinformatics, 2013
 #
 # @inheritParams FindMarkers
-# @param object Seurat440 object
+# @param object Seurat object
 # @param cells.1 Group 1 cells
 # @param cells.2 Group 2 cells
 # @param assay.type Type of assay to fetch data for (default is RNA)
@@ -1722,7 +1722,7 @@ GLMDETest <- function(
   return(to.return)
 }
 
-# Helper function for FindMarkers.Seurat440 and FoldChange.Seurat440
+# Helper function for FindMarkers.Seurat and FoldChange.Seurat
 # Convert idents to cells
 #
 #' @importFrom methods is
@@ -2116,7 +2116,7 @@ PerformDE <- function(
 #' as the sequencing depth covariate.
 #' The counts slot of the SCT assay is replaced with recorrected counts and
 #' the data slot is replaced with log1p of recorrected counts.
-#' @param object Seurat440 object with SCT assays
+#' @param object Seurat object with SCT assays
 #' @param assay Assay name where for SCT objects are stored; Default is 'SCT'
 #' @param verbose Print messages and progress
 #' @importFrom Matrix Matrix
@@ -2125,7 +2125,7 @@ PerformDE <- function(
 #' @importFrom future nbrOfWorkers
 #' @importFrom sctransform correct_counts
 #'
-#' @return Returns a Seurat440 object with recorrected counts and data in the SCT assay.
+#' @return Returns a Seurat object with recorrected counts and data in the SCT assay.
 #' @export
 #'
 #' @concept differential_expression
@@ -2422,7 +2422,7 @@ WilcoxDETest <- function(
       }
     )
   } else {
-    if (getOption('Seurat440.limma.wilcox.msg', TRUE) && overflow.check) {
+    if (getOption('Seurat.limma.wilcox.msg', TRUE) && overflow.check) {
       message(
         "For a more efficient implementation of the Wilcoxon Rank Sum Test,",
         "\n(default method for FindMarkers) please install the limma package",
@@ -2430,11 +2430,11 @@ WilcoxDETest <- function(
         "\ninstall.packages('BiocManager')",
         "\nBiocManager::install('limma')",
         "\n--------------------------------------------",
-        "\nAfter installation of limma, Seurat440 will automatically use the more ",
+        "\nAfter installation of limma, Seurat will automatically use the more ",
         "\nefficient implementation (no further action necessary).",
         "\nThis message will be shown once per session"
       )
-      options(Seurat440.limma.wilcox.msg = FALSE)
+      options(Seurat.limma.wilcox.msg = FALSE)
     }
     group.info <- data.frame(row.names = c(cells.1, cells.2))
     group.info[cells.1, "group"] <- "Group1"

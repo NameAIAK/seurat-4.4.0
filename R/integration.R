@@ -8,7 +8,7 @@ NULL
 
 #' Find integration anchors
 #'
-#' Find a set of anchors between a list of \code{\link{Seurat440}} objects.
+#' Find a set of anchors between a list of \code{\link{Seurat}} objects.
 #' These  anchors can later be used to integrate the objects using the
 #' \code{\link{IntegrateData}} function.
 #'
@@ -41,7 +41,7 @@ NULL
 #'   these scores to dampen outlier effects and rescale to range between 0-1.}
 #' }
 #'
-#' @param object.list A list of \code{\link{Seurat440}} objects between which to
+#' @param object.list A list of \code{\link{Seurat}} objects between which to
 #' find anchors for downstream integration.
 #' @param assay A vector of assay names specifying which assay to use when
 #' constructing anchors. If NULL, the current default assay for each object is
@@ -108,7 +108,7 @@ NULL
 #' library(SeuratData)
 #' data("panc8")
 #'
-#' # panc8 is a merged Seurat440 object containing 8 separate pancreas datasets
+#' # panc8 is a merged Seurat object containing 8 separate pancreas datasets
 #' # split the object by dataset
 #' pancreas.list <- SplitObject(panc8, split.by = "tech")
 #'
@@ -308,7 +308,7 @@ FindIntegrationAnchors <- function(
   anchoring.fxn <- function(row) {
     i <- combinations[row, 1]
     j <- combinations[row, 2]
-    object.1 <- DietSeurat440(
+    object.1 <- DietSeurat(
       object = object.list[[i]],
       assays = assay[i],
       features = anchor.features,
@@ -316,7 +316,7 @@ FindIntegrationAnchors <- function(
       scale.data = TRUE,
       dimreducs = reduction
     )
-    object.2 <- DietSeurat440(
+    object.2 <- DietSeurat(
       object = object.list[[j]],
       assays = assay[j],
       features = anchor.features,
@@ -330,13 +330,13 @@ FindIntegrationAnchors <- function(
     if (reduction %in% Reductions(object = object.1)) {
       slot(object = object.1[[reduction]], name = "assay.used") <- "ToIntegrate"
     }
-    object.1 <- DietSeurat440(object = object.1, assays = "ToIntegrate", scale.data = TRUE, dimreducs = reduction)
+    object.1 <- DietSeurat(object = object.1, assays = "ToIntegrate", scale.data = TRUE, dimreducs = reduction)
     suppressWarnings(object.2[["ToIntegrate"]] <- object.2[[assay[j]]])
     DefaultAssay(object = object.2) <- "ToIntegrate"
     if (reduction %in% Reductions(object = object.2)) {
       slot(object = object.2[[reduction]], name = "assay.used") <- "ToIntegrate"
     }
-    object.2 <- DietSeurat440(object = object.2, assays = "ToIntegrate", scale.data = TRUE, dimreducs = reduction)
+    object.2 <- DietSeurat(object = object.2, assays = "ToIntegrate", scale.data = TRUE, dimreducs = reduction)
     object.pair <- switch(
       EXPR = reduction,
       'cca' = {
@@ -444,7 +444,7 @@ FindIntegrationAnchors <- function(
   all.anchors <- do.call(what = 'rbind', args = all.anchors)
   all.anchors <- rbind(all.anchors, all.anchors[, c(2, 1, 3)])
   all.anchors <- AddDatasetID(anchor.df = all.anchors, offsets = offsets, obj.lengths = objects.ncell)
-  command <- LogSeurat440Command(object = object.list[[1]], return.command = TRUE)
+  command <- LogSeuratCommand(object = object.list[[1]], return.command = TRUE)
   anchor.set <- new(Class = "IntegrationAnchorSet",
                     object.list = object.list,
                     reference.objects = reference %||% seq_along(object.list),
@@ -459,8 +459,8 @@ FindIntegrationAnchors <- function(
 # Merge dataset and perform reciprocal SVD projection, adding new dimreducs
 # for each projection and the merged original SVDs.
 #
-# @param object.1 First Seurat440 object to merge
-# @param object.2 Second Seurat440 object to merge
+# @param object.1 First Seurat object to merge
+# @param object.2 Second Seurat object to merge
 # @param reduction Name of DimReduc to use. Must be an SVD-based DimReduc (eg, PCA or LSI)
 # so that the loadings can be used to project new embeddings. Must be present
 # in both input objects, with a substantial overlap in the features use to construct
@@ -473,7 +473,7 @@ FindIntegrationAnchors <- function(
 # @param do.scale Scale projected values (divide by SD)
 # @param slot Name of slot to pull data from. Should be scale.data for PCA and data for LSI
 # @param verbose Display messages
-# @return Returns a merged Seurat440 object with two projected SVDs (object.1 -> object.2, object.2 -> object.1)
+# @return Returns a merged Seurat object with two projected SVDs (object.1 -> object.2, object.2 -> object.1)
 # and a merged SVD (needed for within-dataset neighbors)
 ReciprocalProject <- function(
   object.1,
@@ -610,8 +610,8 @@ ReciprocalProject <- function(
 #'   these scores to dampen outlier effects and rescale to range between 0-1.}
 #' }
 #'
-#' @param reference \code{\link{Seurat440}} object to use as the reference
-#' @param query \code{\link{Seurat440}} object to use as the query
+#' @param reference \code{\link{Seurat}} object to use as the reference
+#' @param query \code{\link{Seurat}} object to use as the query
 #' @param reference.assay Name of the Assay to use from reference
 #' @param reference.neighbors Name of the Neighbor to use from the reference.
 #' Optionally enables reuse of precomputed neighbors.
@@ -816,7 +816,7 @@ FindTransferAnchors <- function(
     feature.mean <- "SCT"
   }
   # only keep necessary info from objects
-  query <- DietSeurat440(
+  query <- DietSeurat(
     object = query,
     assays = query.assay,
     dimreducs = reference.reduction,
@@ -830,7 +830,7 @@ FindTransferAnchors <- function(
     slot(object = reference[[reference.reduction]], name = "assay.used") <- reference.assay
   }
 
-  reference <- DietSeurat440(
+  reference <- DietSeurat(
     object = reference,
     assays = reference.assay,
     dimreducs = reference.reduction,
@@ -916,8 +916,8 @@ FindTransferAnchors <- function(
       assay = reference.assay
     )
     combined.ob <- suppressWarnings(expr = merge(
-      x = DietSeurat440(object = reference, counts = FALSE),
-      y = DietSeurat440(object = query, counts = FALSE),
+      x = DietSeurat(object = reference, counts = FALSE),
+      y = DietSeurat(object = query, counts = FALSE),
     ))
     combined.ob[["pcaproject"]] <- combined.pca
     colnames(x = orig.loadings) <- paste0("ProjectPC_", 1:ncol(x = orig.loadings))
@@ -1067,8 +1067,8 @@ FindTransferAnchors <- function(
       assay = reference.assay
     )
     combined.ob <- merge(
-      x = DietSeurat440(object = reference),
-      y = DietSeurat440(object = query)
+      x = DietSeurat(object = reference),
+      y = DietSeurat(object = query)
     )
     combined.ob[["lsiproject"]] <- combined.lsi
     colnames(x = orig.loadings) <- paste0("ProjectLSI_", 1:ncol(x = orig.loadings))
@@ -1146,7 +1146,7 @@ FindTransferAnchors <- function(
     combined.ob[[dummy.assay]] <- NULL
   }
   slot(object = combined.ob, name = "reductions") <- reductions
-  command <- LogSeurat440Command(object = combined.ob, return.command = TRUE)
+  command <- LogSeuratCommand(object = combined.ob, return.command = TRUE)
   slot(command, name = 'params')$reference.reduction <- reference.reduction.init
   anchor.set <- new(
     Class = "TransferAnchorSet",
@@ -1170,7 +1170,7 @@ FindTransferAnchors <- function(
 #' prediction. This is useful if you've set \code{prediction.assay = TRUE} in
 #' \code{\link{TransferData}} and want to have a vector with the predicted class.
 #'
-#' @param object Seurat440 object
+#' @param object Seurat object
 #' @param assay Name of the assay holding the predictions
 #' @param slot Slot of the assay in which the prediction scores are stored
 #' @param score.filter Return "Unassigned" for any cell with a score less than
@@ -1294,7 +1294,7 @@ GetTransferPredictions <- function(object, assay = "predictions", slot = "data",
 #' \code{\link{RANN}})
 #' @param verbose Print progress bars and output
 #'
-#' @return Returns a \code{\link{Seurat440}} object with a new integrated
+#' @return Returns a \code{\link{Seurat}} object with a new integrated
 #' \code{\link{Assay}}. If \code{normalization.method = "LogNormalize"}, the
 #' integrated data is returned to the \code{data} slot and can be treated as
 #' log-normalized, corrected data. If \code{normalization.method = "SCT"}, the
@@ -1313,7 +1313,7 @@ GetTransferPredictions <- function(object, assay = "predictions", slot = "data",
 #' library(SeuratData)
 #' data("panc8")
 #'
-#' # panc8 is a merged Seurat440 object containing 8 separate pancreas datasets
+#' # panc8 is a merged Seurat object containing 8 separate pancreas datasets
 #' # split the object by dataset
 #' pancreas.list <- SplitObject(panc8, split.by = "tech")
 #'
@@ -1456,7 +1456,7 @@ IntegrateData <- function(
     DefaultAssay(object = reference.integrated) <- new.assay.name
     VariableFeatures(object = reference.integrated) <- features
     reference.integrated[["FindIntegrationAnchors"]] <- slot(object = anchorset, name = "command")
-    reference.integrated <- suppressWarnings(LogSeurat440Command(object = reference.integrated))
+    reference.integrated <- suppressWarnings(LogSeuratCommand(object = reference.integrated))
     return(reference.integrated)
   } else {
     active.assay <- DefaultAssay(object = ref[[1]])
@@ -1528,7 +1528,7 @@ IntegrateData <- function(
     DefaultAssay(object = unintegrated) <- new.assay.name
     VariableFeatures(object = unintegrated) <- features
     unintegrated[["FindIntegrationAnchors"]] <- slot(object = anchorset, name = "command")
-    unintegrated <- suppressWarnings(LogSeurat440Command(object = unintegrated))
+    unintegrated <- suppressWarnings(LogSeuratCommand(object = unintegrated))
     return(unintegrated)
   }
 }
@@ -1658,7 +1658,7 @@ IntegrateEmbeddings.IntegrationAnchorSet <- function(
     new.data = anchors
   )
   unintegrated[["FindIntegrationAnchors"]] <- slot(object = anchorset, name = "command")
-  suppressWarnings(unintegrated <- LogSeurat440Command(object = unintegrated))
+  suppressWarnings(unintegrated <- LogSeuratCommand(object = unintegrated))
   return(unintegrated)
 }
 #' @param reference Reference object used in anchorset construction
@@ -1719,7 +1719,7 @@ IntegrateEmbeddings.TransferAnchorSet <- function(
     )
     object.list[[i]][['drtointegrate']] <- fake.assay
     DefaultAssay(object = object.list[[i]]) <- "drtointegrate"
-    object.list[[i]] <- DietSeurat440(object = object.list[[i]], assays = "drtointegrate")
+    object.list[[i]] <- DietSeurat(object = object.list[[i]], assays = "drtointegrate")
   }
   slot(object = anchorset, name = "object.list") <- object.list
   new.reduction.name.safe <- gsub(pattern = "_", replacement = "", x = new.reduction.name)
@@ -1768,7 +1768,7 @@ IntegrateEmbeddings.TransferAnchorSet <- function(
 #' size of the intersection of those two sets of neighbors.
 #' Return the average over all groups.
 #'
-#' @param object Seurat440 object
+#' @param object Seurat object
 #' @param grouping.var Grouping variable
 #' @param idents Optionally specify a set of idents to compute metric for
 #' @param neighbors Number of neighbors to compute in pca/corrected pca space
@@ -1875,7 +1875,7 @@ LocalStruct <- function(
 #' \code{\link{IntegrateEmbeddings}}
 #' @param projectumap.args A named list of additional arguments to
 #' \code{\link{ProjectUMAP}}
-#' @return Returns a modified query Seurat440 object containing:
+#' @return Returns a modified query Seurat object containing:
 #'
 #' \itemize{
 #'   \item{New Assays corresponding to the features transferred and/or their
@@ -2312,7 +2312,7 @@ MappingScore.AnchorSet <- function(
   ))
   query.neighbors <- slot(object = anchors, name = "neighbors")[["query.neighbors"]]
   # reduce size of anchorset combined object
-  combined.object <- DietSeurat440(object = combined.object)
+  combined.object <- DietSeurat(object = combined.object)
   combined.object <- subset(
     x = combined.object,
     features = c(rownames(x = combined.object)[1])
@@ -2348,7 +2348,7 @@ MappingScore.AnchorSet <- function(
 #' overall neighborhood. We then take the median across all groups as the mixing
 #' metric per cell.
 #'
-#' @param object Seurat440 object
+#' @param object Seurat object
 #' @param grouping.var Grouping variable for dataset
 #' @param reduction Which dimensionally reduced space to use
 #' @param dims Dimensions to use
@@ -2423,7 +2423,7 @@ MixingMetric <- function(
 #'   anchor.features for efficiency in downstream processing. }
 #' }
 #'
-#' @param object.list A list of \code{\link{Seurat440}} objects to prepare for integration
+#' @param object.list A list of \code{\link{Seurat}} objects to prepare for integration
 #' @param assay The name of the \code{\link{Assay}} to use for integration. This can be a
 #' single name if all the assays to be integrated have the same name, or a character vector
 #' containing the name of each \code{\link{Assay}} in each object to be integrated. The
@@ -2440,7 +2440,7 @@ MixingMetric <- function(
 #' the Pearson residual will be clipped to
 #' @param verbose Display output/messages
 #'
-#' @return A list of \code{\link{Seurat440}} objects with the appropriate \code{scale.data} slots
+#' @return A list of \code{\link{Seurat}} objects with the appropriate \code{scale.data} slots
 #' containing only the required \code{anchor.features}.
 #'
 #' @importFrom pbapply pblapply
@@ -2456,7 +2456,7 @@ MixingMetric <- function(
 #' library(SeuratData)
 #' data("panc8")
 #'
-#' # panc8 is a merged Seurat440 object containing 8 separate pancreas datasets
+#' # panc8 is a merged Seurat object containing 8 separate pancreas datasets
 #' # split the object by dataset and take the first 2 to integrate
 #' pancreas.list <- SplitObject(panc8, split.by = "tech")[1:2]
 #'
@@ -2565,7 +2565,7 @@ PrepSCTIntegration <- function(
   assays.used <- assay
   for (i in 1:length(x = object.list)) {
     assay <- as.character(x = assays.used[i])
-    object.list[[i]] <- LogSeurat440Command(object = object.list[[i]])
+    object.list[[i]] <- LogSeuratCommand(object = object.list[[i]])
   }
   names(x = object.list) <- objects.names
   return(object.list)
@@ -2582,7 +2582,7 @@ PrepSCTIntegration <- function(
 #' run, this method will try to run it using the \code{fvf.nfeatures} parameter
 #' and any additional ones specified through the \dots.
 #'
-#' @param object.list List of Seurat440 objects
+#' @param object.list List of seurat objects
 #' @param nfeatures Number of features to return
 #' @param assay Name or vector of assay names (one for each object) from which
 #' to pull the variable features.
@@ -2605,7 +2605,7 @@ PrepSCTIntegration <- function(
 #' library(SeuratData)
 #' data("panc8")
 #'
-#' # panc8 is a merged Seurat440 object containing 8 separate pancreas datasets
+#' # panc8 is a merged Seurat object containing 8 separate pancreas datasets
 #' # split the object by dataset and take the first 2
 #' pancreas.list <- SplitObject(panc8, split.by = "tech")[1:2]
 #'
@@ -3050,10 +3050,10 @@ TransferData <- function(
 }
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# Methods for Seurat440-defined generics
+# Methods for Seurat-defined generics
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#' @param object.list List of Seurat440 objects
+#' @param object.list List of Seurat objects
 #' @rdname AnnotateAnchors
 #' @export
 #' @method AnnotateAnchors default
@@ -3232,7 +3232,7 @@ AnnotateAnchors.TransferAnchorSet <- function(
 
 # Add dataset number and remove cell offset
 #
-# Record which dataset number in the original list of Seurat440 objects
+# Record which dataset number in the original list of Seurat objects
 # each anchor cell came from, and correct the cell index so it corresponds to
 # the position of the anchor cell in its own dataset
 #
@@ -4043,7 +4043,7 @@ NNtoMatrix <- function(idx, distance, k) {
 # \code{\link{RANN}})
 # @param verbose Print progress bars and output
 #
-# @return Returns a Seurat440 object with a new integrated Assay
+# @return Returns a Seurat object with a new integrated Assay
 #
 PairwiseIntegrateReference <- function(
   anchorset,
@@ -4143,12 +4143,12 @@ PairwiseIntegrateReference <- function(
     } else {
       weight.pair <- NULL
     }
-    object.1 <- DietSeurat440(
+    object.1 <- DietSeurat(
       object = object.list[[merge.pair[1]]],
       assays = DefaultAssay(object =  object.list[[merge.pair[1]]]),
       counts = FALSE
     )
-    object.2 <- DietSeurat440(
+    object.2 <- DietSeurat(
       object = object.list[[merge.pair[2]]],
       assays = DefaultAssay(object =  object.list[[merge.pair[2]]]),
       counts = FALSE
@@ -4156,10 +4156,10 @@ PairwiseIntegrateReference <- function(
     # suppress key duplication warning
     suppressWarnings(object.1[["ToIntegrate"]] <- object.1[[DefaultAssay(object = object.1)]])
     DefaultAssay(object = object.1) <- "ToIntegrate"
-    object.1 <- DietSeurat440(object = object.1, assays = "ToIntegrate")
+    object.1 <- DietSeurat(object = object.1, assays = "ToIntegrate")
     suppressWarnings(object.2[["ToIntegrate"]] <- object.2[[DefaultAssay(object = object.2)]])
     DefaultAssay(object = object.2) <- "ToIntegrate"
-    object.2 <- DietSeurat440(object = object.2, assays = "ToIntegrate")
+    object.2 <- DietSeurat(object = object.2, assays = "ToIntegrate")
     datasets <- ParseMergePair(sample.tree, ii)
     if (verbose) {
       message(
@@ -4237,7 +4237,7 @@ PairwiseIntegrateReference <- function(
     new.data = sample.tree
   )
   unintegrated[["FindIntegrationAnchors"]] <- slot(object = anchorset, name = "command")
-  suppressWarnings(expr = unintegrated <- LogSeurat440Command(object = unintegrated))
+  suppressWarnings(expr = unintegrated <- LogSeuratCommand(object = unintegrated))
   return(unintegrated)
 }
 
@@ -4736,7 +4736,7 @@ ScoreAnchors <- function(
 
 # Get top n features across given set of dimensions
 #
-# @param object Seurat440 object
+# @param object Seurat object
 # @param reduction Which dimension reduction to use
 # @param dims Which dimensions to use
 # @param features.per.dim How many features to consider per dimension
@@ -4962,7 +4962,7 @@ ValidateParams_FindTransferAnchors <- function(
       }
       if (!query.umi.assay %in% Assays(object = query)) {
         stop("Query assay provided is an SCTAssay based on an orignal UMI assay",
-             " that is no longer present in the query Seurat440 object. Unable to",
+             " that is no longer present in the query Seurat object. Unable to",
              " recompute residuals based on the reference SCT model.\n",
              "If you want to use Query SCTAssay residuals to continue the analysis, ",
              "you can set recompute.residuals to FALSE", call. = FALSE)

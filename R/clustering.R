@@ -13,7 +13,7 @@ NULL
 #' for each modality.Other parameters are listed for debugging, but can be left
 #' as default values.
 #'
-#' @param object A Seurat440 object
+#' @param object A Seurat object
 #' @param reduction.list A list of two dimensional reductions, one for each of
 #' the modalities to be integrated
 #' @param dims.list A list containing the dimensions for each reduction to use
@@ -37,7 +37,7 @@ NULL
 #' \code{FindModalityWeights}
 #' @param verbose Print progress bars and output
 #'
-#' @return Seurat440 object containing a nearest-neighbor object, KNN graph, and
+#' @return Seurat object containing a nearest-neighbor object, KNN graph, and
 #' SNN graph - each based on a weighted combination of modalities.
 #' @concept clustering
 #' @export
@@ -139,7 +139,7 @@ FindMultiModalNeighbors  <- function(
   slot(object = modality.weight.command, name = "assay.used") <- first.assay
   modality.weight.command.name <- slot(object = modality.weight.command, name = "name")
   object[[modality.weight.command.name]] <- modality.weight.command
-  command <- LogSeurat440Command(object = object, return.command = TRUE)
+  command <- LogSeuratCommand(object = object, return.command = TRUE)
   slot(object = command, name = "params")$modality.weight <- NULL
   slot(object = command, name = "assay.used") <- first.assay
   command.name <- slot(object = command, name = "name")
@@ -267,7 +267,7 @@ PredictAssay <- function(
 }
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# Methods for Seurat440-defined generics
+# Methods for Seurat-defined generics
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #' @importFrom pbapply pblapply
@@ -407,9 +407,9 @@ FindClusters.default <- function(
 #' @rdname FindClusters
 #' @export
 #' @concept clustering
-#' @method FindClusters Seurat440
+#' @method FindClusters Seurat
 #'
-FindClusters.Seurat440 <- function(
+FindClusters.Seurat <- function(
   object,
   graph.name = NULL,
   modularity.fxn = 1,
@@ -430,7 +430,7 @@ FindClusters.Seurat440 <- function(
   CheckDots(...)
   graph.name <- graph.name %||% paste0(DefaultAssay(object = object), "_snn")
   if (!graph.name %in% names(x = object)) {
-    stop("Provided graph.name not present in Seurat440 object")
+    stop("Provided graph.name not present in Seurat object")
   }
   if (!is(object = object[[graph.name]], class2 = "Graph")) {
     stop("Provided graph.name does not correspond to a graph object.")
@@ -466,8 +466,8 @@ FindClusters.Seurat440 <- function(
     }
   )
   Idents(object = object) <- factor(x = Idents(object = object), levels = sort(x = levels))
-  object[['Seurat_clusters']] <- Idents(object = object)
-  cmd <- LogSeurat440Command(object = object, return.command = TRUE)
+  object[['seurat_clusters']] <- Idents(object = object)
+  cmd <- LogSeuratCommand(object = object, return.command = TRUE)
   slot(object = cmd, name = 'assay.used') <- DefaultAssay(object = object[[graph.name]])
   object[[slot(object = cmd, name = 'name')]] <- cmd
   return(object)
@@ -722,9 +722,9 @@ FindNeighbors.dist <- function(
 #' @rdname FindNeighbors
 #' @export
 #' @concept clustering
-#' @method FindNeighbors Seurat440
+#' @method FindNeighbors Seurat
 #'
-FindNeighbors.Seurat440 <- function(
+FindNeighbors.Seurat <- function(
   object,
   reduction = "pca",
   dims = 1:10,
@@ -832,7 +832,7 @@ FindNeighbors.Seurat440 <- function(
       }
     }
   }
-  object <- LogSeurat440Command(object = object)
+  object <- LogSeuratCommand(object = object)
   return(object)
 }
 
@@ -1015,7 +1015,7 @@ CreateAnn <- function(name, ndim) {
 # This function calculates cell-specific modality weights which are used to
 # in WNN analysis.
 #' @inheritParams FindMultiModalNeighbors
-# @param object A Seurat440 object
+# @param object A Seurat object
 # @param snn.far.nn Use SNN farthest neighbors to calculate the kernel width
 # @param s.nn How many SNN neighbors to use in kernel width
 # @param sigma.idx Neighbor index used to calculate kernel width if snn.far.nn = FALSE
@@ -1282,7 +1282,7 @@ FindModalityWeights  <- function(
   )
 
   # unlist the input parameters
-  command <- LogSeurat440Command(object = object, return.command = TRUE)
+  command <- LogSeuratCommand(object = object, return.command = TRUE)
   command@params <- lapply(X = command@params, FUN = function(l) unlist(x = l))
   modality.assay <- sapply(
     X = reduction.list ,
@@ -1307,7 +1307,7 @@ FindModalityWeights  <- function(
 # @param group.singletons Group singletons into nearest cluster. If FALSE, assign all singletons to
 # a "singleton" group
 #
-# @return Returns Seurat440 object with all singletons merged with most connected cluster
+# @return Returns Seurat object with all singletons merged with most connected cluster
 #
 GroupSingletons <- function(ids, SNN, group.singletons = TRUE, verbose = TRUE) {
   # identify singletons
@@ -1410,7 +1410,7 @@ MultiModalNN <- function(
   modality.weight.value  <- modality.weight.list %||%
     slot(object = modality.weight, name = "modality.weight.list")
   names(x = modality.weight.value) <- unlist(x = reduction.list)
-  if (inherits(x = object, what = "Seurat440")) {
+  if (inherits(x = object, what = "Seurat")) {
     reduction_embedding <- lapply(
       X = 1:length(x = reduction.list),
       FUN = function(x) {
@@ -1424,7 +1424,7 @@ MultiModalNN <- function(
     query.reduction_embedding <- reduction_embedding
     query <- object
   } else {
-    if (inherits(x = object, what = "Seurat440")) {
+    if (inherits(x = object, what = "Seurat")) {
       query.reduction_embedding <- lapply(
         X = 1:length(x = reduction.list),
         FUN = function(x) {
@@ -1728,7 +1728,7 @@ RunLeiden <- function(
 # @param temp.file.location Deprecated and no longer used
 # @param edge.file.name Path to edge file to use
 #
-# @return Seurat440 object with identities set to the results of the clustering procedure
+# @return Seurat object with identities set to the results of the clustering procedure
 #
 #' @importFrom utils read.table write.table
 #
