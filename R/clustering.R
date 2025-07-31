@@ -1374,7 +1374,7 @@ GroupSingletons <- function(ids, SNN, group.singletons = TRUE, verbose = TRUE) {
 # @return return a list containing nn index and nn multimodal distance
 #
 #' @importFrom methods new
-#' @importClassesFrom Seurat440Object Neighbor
+#' @importClassesFrom SeuratObject Neighbor
 #
 MultiModalNN <- function(
   object,
@@ -1592,7 +1592,7 @@ NNdist <- function(
 # @param ... additional parameters to specific neighbor finding method
 #
 #' @importFrom methods new
-#' @importClassesFrom Seurat440Object Neighbor
+#' @importClassesFrom SeuratObject Neighbor
 #
 NNHelper <- function(data, query = data, k, method, cache.index = FALSE, ...) {
   args <- as.list(x = sys.frame(which = sys.nframe()))
