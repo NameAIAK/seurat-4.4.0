@@ -64,9 +64,9 @@ as.SingleCellExperiment <- function(x, ...) {
 #' @param object An object
 #' @param ... Arguments passed to other methods
 #'
-#' @return Returns a Seurat object where the idents have been updated with new cluster info;
-#' latest clustering results will be stored in object metadata under 'seurat_clusters'.
-#' Note that 'seurat_clusters' will be overwritten everytime FindClusters is run
+#' @return Returns a Seurat440 object where the idents have been updated with new cluster info;
+#' latest clustering results will be stored in object metadata under 'Seurat_clusters'.
+#' Note that 'Seurat_clusters' will be overwritten everytime FindClusters is run
 #'
 #' @export
 #'
@@ -95,7 +95,7 @@ FindClusters <- function(object, ...) {
 #'
 #' @details p-value adjustment is performed using bonferroni correction based on
 #' the total number of genes in the dataset. Other correction methods are not
-#' recommended, as Seurat pre-filters genes using the arguments above, reducing
+#' recommended, as Seurat440 pre-filters genes using the arguments above, reducing
 #' the number of tests performed. Lastly, as Aaron Lun has pointed out, p-values
 #' should be interpreted cautiously, as the genes used for clustering are the
 #' same genes tested for differential expression.
@@ -157,8 +157,8 @@ FindMarkers <- function(object, ...) {
 #' @return This function can either return a \code{\link{Neighbor}} object
 #' with the KNN information or a list of \code{\link{Graph}} objects with
 #' the KNN and SNN depending on the settings of \code{return.neighbor} and
-#' \code{compute.SNN}. When running on a \code{\link{Seurat}} object, this
-#' returns the \code{\link{Seurat}} object with the Graphs or Neighbor objects
+#' \code{compute.SNN}. When running on a \code{\link{Seurat440}} object, this
+#' returns the \code{\link{Seurat440}} object with the Graphs or Neighbor objects
 #' stored in their respective slots. Names of the Graph or Neighbor object can
 #' be found with \code{\link{Graphs}} or \code{\link{Neighbors}}.
 #'
@@ -233,7 +233,7 @@ FindSpatiallyVariableFeatures <- function(object, ...) {
 #' data("pbmc_small")
 #' FoldChange(pbmc_small, ident.1 = 1)
 #'
-#' @param object A Seurat object
+#' @param object A Seurat440 object
 #' @param ... Arguments passed to other methods
 #' @rdname FoldChange
 #' @export FoldChange
@@ -243,7 +243,7 @@ FoldChange <- function(object, ...) {
   UseMethod(generic = 'FoldChange', object = object)
 }
 
-#' Get an Assay object from a given Seurat object.
+#' Get an Assay object from a given Seurat440 object.
 #'
 #' @param object An object
 #' @param ... Arguments passed to other methods
@@ -365,13 +365,13 @@ ProjectUMAP <- function(query, ...) {
 #' Runs a canonical correlation analysis using a diagonal implementation of CCA.
 #' For details about stored CCA calculation parameters, see
 #' \code{PrintCCAParams}.
-#' @param object1 First Seurat object
-#' @param object2 Second Seurat object.
+#' @param object1 First Seurat440 object
+#' @param object2 Second Seurat440 object.
 # @param ... Arguments passed to other methods
 #'
-#' @return Returns a combined Seurat object with the CCA results stored.
+#' @return Returns a combined Seurat440 object with the CCA results stored.
 #'
-#' @seealso \code{\link{merge.Seurat}}
+#' @seealso \code{\link{merge.Seurat440}}
 #'
 #' @examples
 #' data("pbmc_small")
@@ -398,7 +398,7 @@ RunCCA <- function(object1, object2, ...) {
 #' For details about stored ICA calculation parameters, see
 #' \code{PrintICAParams}.
 #'
-#' @param object Seurat object
+#' @param object Seurat440 object
 #'
 #' @rdname RunICA
 #' @export RunICA
@@ -430,7 +430,7 @@ RunLDA <- function(object, ...) {
 #' @param object An object
 #' @param ... Arguments passed to other methods and IRLBA
 #'
-#' @return Returns Seurat object with the PCA calculation stored in the reductions slot
+#' @return Returns Seurat440 object with the PCA calculation stored in the reductions slot
 #'
 #' @export
 #'
@@ -450,7 +450,7 @@ RunPCA <- function(object, ...) {
 #' @param object An object
 #' @param ... Arguments passed to IRLBA irlba
 #'
-#' @return Returns Seurat object with the SLSI calculation stored in the
+#' @return Returns Seurat440 object with the SLSI calculation stored in the
 #' reductions slot
 #'
 #' @export
@@ -472,7 +472,7 @@ RunSLSI <- function(object, ...) {
 #' @param object An object
 #' @param ... Arguments passed to other methods and IRLBA
 #'
-#' @return Returns Seurat object with the SPCA calculation stored in the reductions slot
+#' @return Returns Seurat440 object with the SPCA calculation stored in the reductions slot
 #' @references Barshan E, Ghodsi A, Azimifar Z, Jahromi MZ.
 #' Supervised principal component analysis: Visualization, classification and
 #' regression on subspaces and submanifolds.
@@ -493,7 +493,7 @@ RunSPCA <- function(object, ...) {
 #' or running based on a set of genes. For details about stored TSNE calculation
 #' parameters, see \code{PrintTSNEParams}.
 #'
-#' @param object Seurat object
+#' @param object Seurat440 object
 #' @param ... Arguments passed to other methods and to t-SNE call (most commonly used is perplexity)
 #'
 #' @rdname RunTSNE
@@ -516,7 +516,7 @@ RunTSNE <- function(object, ...) {
 #' @param object An object
 #' @param ... Arguments passed to other methods and UMAP
 #'
-#' @return Returns a Seurat object containing a UMAP representation
+#' @return Returns a Seurat440 object containing a UMAP representation
 #'
 #' @references McInnes, L, Healy, J, UMAP: Uniform Manifold Approximation and
 #' Projection for Dimension Reduction, ArXiv e-prints 1802.03426, 2018
@@ -592,7 +592,7 @@ ScaleFactors <- function(object, ...) {
 #' @param object An object
 #' @param ... Arguments passed to other methods
 #'
-#' @return Returns a Seurat object
+#' @return Returns a Seurat440 object
 #'
 #' @author Omri Wurtzel
 #' @seealso \code{\link{JackStrawPlot}}
