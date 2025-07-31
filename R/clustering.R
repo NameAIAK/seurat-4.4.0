@@ -466,7 +466,7 @@ FindClusters.Seurat440 <- function(
     }
   )
   Idents(object = object) <- factor(x = Idents(object = object), levels = sort(x = levels))
-  object[['Seurat440_clusters']] <- Idents(object = object)
+  object[['Seurat_clusters']] <- Idents(object = object)
   cmd <- LogSeurat440Command(object = object, return.command = TRUE)
   slot(object = cmd, name = 'assay.used') <- DefaultAssay(object = object[[graph.name]])
   object[[slot(object = cmd, name = 'name')]] <- cmd
