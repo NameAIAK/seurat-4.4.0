@@ -11,7 +11,7 @@ NULL
 #' @param assay Name to store expression matrix as
 #' @inheritDotParams ReadAkoya
 #'
-#' @return \code{LoadAkoya}: A \code{\link[SeuratObject]{Seurat}} object
+#' @return \code{LoadAkoya}: A \code{\link[SeuratObject]{Seurat440}} object
 #'
 #' @importFrom SeuratObject Cells CreateFOV CreateSeuratObject
 #'
@@ -38,15 +38,15 @@ LoadAkoya <- function(
   colnames(x = data$metadata) <- suppressWarnings(
     expr = make.names(names = colnames(x = data$metadata))
   )
-  # build Seurat object from matrix
+  # build Seurat440 object from matrix
   obj <- CreateSeuratObject(
     counts = data$matrix,
     assay = assay,
     meta.data = data$metadata
   )
-  # make sure coords only contain cells in seurat object
+  # make sure coords only contain cells in Seurat440 object
   coords <- subset(x = coords, cells = Cells(x = obj))
-  suppressWarnings(expr = obj[[fov]] <- coords) # add image to seurat object
+  suppressWarnings(expr = obj[[fov]] <- coords) # add image to Seurat440 object
   # Add additional assays
   for (i in setdiff(x = names(x = data), y = c('matrix', 'centroids', 'metadata'))) {
     suppressWarnings(expr = obj[[i]] <- CreateAssayObject(counts = data[[i]]))
@@ -58,7 +58,7 @@ LoadAkoya <- function(
 #' @param data.dir Path to a directory containing Vitessce cells
 #' and clusters JSONs
 #'
-#' @return \code{LoadHuBMAPCODEX}: A \code{\link[SeuratObject]{Seurat}} object
+#' @return \code{LoadHuBMAPCODEX}: A \code{\link[SeuratObject]{Seurat440}} object
 #'
 #' @importFrom SeuratObject Cells CreateFOV CreateSeuratObject
 #'
@@ -72,14 +72,14 @@ LoadHuBMAPCODEX <- function(data.dir, fov, assay = 'CODEX') {
     coords = file.path(data.dir, "reg1_stitched_expressions.cells.json"),
     type = "segmentations"
   )
-  # Create spatial and Seurat objects
+  # Create spatial and Seurat440 objects
   coords <- CreateFOV(
     coords = data$segmentations,
     molecules = data$molecules,
     assay = assay
   )
   obj <- CreateSeuratObject(counts = data$counts, assay = assay)
-  # make sure spatial coords only contain cells in seurat object
+  # make sure spatial coords only contain cells in Seurat440 object
   coords <- subset(x = coords, cells = Cells(x = obj))
   obj[[fov]] <- coords
   return(obj)
@@ -88,7 +88,7 @@ LoadHuBMAPCODEX <- function(data.dir, fov, assay = 'CODEX') {
 #' @inheritParams ReadAkoya
 #' @param data.dir Path to folder containing Nanostring SMI outputs
 #'
-#' @return \code{LoadNanostring}: A \code{\link[SeuratObject]{Seurat}} object
+#' @return \code{LoadNanostring}: A \code{\link[SeuratObject]{Seurat440}} object
 #'
 #' @importFrom SeuratObject Cells CreateCentroids CreateFOV
 #' CreateSegmentation CreateSeuratObject
@@ -127,7 +127,7 @@ LoadNanostring <- function(data.dir, fov, assay = 'Nanostring') {
   return(obj)
 }
 
-#' @return \code{LoadVizgen}: A \code{\link[SeuratObject]{Seurat}} object
+#' @return \code{LoadVizgen}: A \code{\link[SeuratObject]{Seurat440}} object
 #'
 #' @importFrom SeuratObject Cells CreateCentroids CreateFOV
 #' CreateSegmentation CreateSeuratObject
@@ -165,12 +165,12 @@ LoadVizgen <- function(data.dir, fov, assay = 'Vizgen', z = 3L) {
       y = Cells(x = obj)
     )
   )
-  # add coords to seurat object
+  # add coords to Seurat440 object
   obj[[fov]] <- coords
   return(obj)
 }
 
-#' @return \code{LoadXenium}: A \code{\link[SeuratObject]{Seurat}} object
+#' @return \code{LoadXenium}: A \code{\link[SeuratObject]{Seurat440}} object
 #'
 #' @param data.dir Path to folder containing Nanostring SMI outputs
 #' @param fov FOV name
@@ -348,7 +348,7 @@ UMAPPlot <- function(object, ...) {
 }
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# Methods for Seurat-defined generics
+# Methods for Seurat440-defined generics
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
